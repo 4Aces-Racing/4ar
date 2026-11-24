@@ -1,0 +1,56 @@
+backend:
+  name: github
+  repo: 4Aces-Racing/4ar
+  branch: main
+  base_url: https://4aces-racing.pages.dev
+  auth_endpoint: api/auth
+  auth_scope: public_repo
+media_folder: assets/uploads
+public_folder: /assets/uploads
+locale: de
+collections:
+  - name: website
+    label: Website verwalten
+    files:
+      - name: inhalte
+        label: Texte, Fahrer, Rennen und Galerie
+        file: content/site.json
+        format: json
+        fields:
+          - {label: Startseiten-Slogan, name: tagline, widget: string}
+          - {label: Über uns – Einleitung, name: about_lead, widget: string}
+          - {label: Über uns – Text, name: about_text, widget: text}
+          - label: Fahrer
+            name: drivers
+            widget: list
+            summary: '{{fields.name}}'
+            fields:
+              - {label: Name, name: name, widget: string}
+              - {label: Startnummer, name: number, widget: string, required: false}
+              - {label: Beschreibung, name: description, widget: text, required: false}
+              - {label: Foto, name: image, widget: image, required: false}
+          - label: Rennen und Ergebnisse
+            name: races
+            widget: list
+            summary: '{{fields.title}}'
+            fields:
+              - {label: Datum, name: date, widget: datetime, date_format: 'DD.MM.YYYY', time_format: false, format: 'DD.MM.YYYY'}
+              - {label: Rennen, name: title, widget: string}
+              - {label: Strecke, name: track, widget: string}
+              - {label: Ergebnis, name: result, widget: string, required: false}
+          - label: Galerie
+            name: gallery
+            widget: list
+            summary: '{{fields.title}}'
+            fields:
+              - {label: Titel, name: title, widget: string}
+              - {label: Bild, name: image, widget: image}
+              - {label: Beschreibung, name: description, widget: text, required: false}
+          - label: Sponsoren
+            name: sponsors
+            widget: list
+            required: false
+            fields:
+              - {label: Name, name: name, widget: string}
+              - {label: Website, name: url, widget: string, required: false}
+              - {label: Logo, name: image, widget: image, required: false}

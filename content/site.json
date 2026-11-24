@@ -1,0 +1,15 @@
+{
+  "tagline": "Gemeinsam schneller.",
+  "about_lead": "Vier Asse. Ein Team. Eine gemeinsame Leidenschaft für den virtuellen Motorsport.",
+  "about_text": "Willkommen bei 4Aces-Racing! Auf dieser Seite stellen wir unser Team, unsere Fahrer und unsere Rennaktivitäten vor. Weitere Informationen zu unserer Geschichte und unseren Zielen folgen in Kürze.",
+  "drivers": [],
+  "races": [],
+  "gallery": [
+    {
+      "title": "BMW M6 GT3",
+      "image": "assets/bmw-m6-gt3.png",
+      "description": "Unser erstes Fahrzeugbild in der 4Aces-Racing-Galerie."
+    }
+  ],
+  "sponsors": []
+}

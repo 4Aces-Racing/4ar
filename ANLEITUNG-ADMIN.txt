@@ -1,0 +1,5 @@
+4Aces-Racing – Admin
+Alle Dateien und Ordner INNERHALB des Ordners 4Aces-Racing in das GitHub-Hauptverzeichnis 4ar hochladen. Bestehende Dateien ersetzen. Cloudflare stellt automatisch bereit.
+Production: GITHUB_CLIENT_ID und GITHUB_CLIENT_SECRET als Secret hinterlegen (ID darf Text sein). Callback: https://4aces-racing.pages.dev/api/callback.
+Admin: https://4aces-racing.pages.dev/admin/ – Anmeldung mit GitHub-Konto 4Aces-Racing. Inhalte speichern/veröffentlichen, dann Cloudflare-Bereitstellung abwarten. Keine Schlüssel in GitHub hochladen.
+OAuth und CMS müssen nach Veröffentlichung live getestet werden. Bei späterer eigener Domain Admin vorerst auf pages.dev nutzen.
