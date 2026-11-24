@@ -13,6 +13,8 @@ editor:
 collections:
   - name: website
     label: Website verwalten
+    editor:
+      preview: true
     files:
       - name: inhalte
         label: Texte, Fahrer, Rennen und Galerie
