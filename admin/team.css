@@ -1,7 +1,8 @@
 /* Scoped to the administration page; CMS functionality remains unchanged. */
 :root { color-scheme: dark; }
 body { margin:0; background:#111115; color:#f5f5f6; font-family:Arial,sans-serif; }
-.team-brand { display:flex; align-items:center; gap:18px; padding:12px 24px; background:#0b0b0e; border-bottom:3px solid #e51b2b; color:white; position:relative; z-index:1; }
+.team-brand { none !important;
+} align-items:center; gap:18px; padding:12px 24px; background:#0b0b0e; border-bottom:3px solid #e51b2b; color:white; position:relative; z-index:1; }
 .team-brand img { width:100px; height:65px; object-fit:contain; }
 .team-brand strong { display:block; font-size:24px; font-weight:900; font-style:italic; letter-spacing:1px; }
 .team-brand strong::first-letter { color:#ff2939; }
