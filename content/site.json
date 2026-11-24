@@ -13,6 +13,11 @@
       "description": "Teamchef und Lackierer",
       "image": "/assets/uploads/porgman_rennen5.png",
       "number": "4711"
+    },
+    {
+      "name": "4ar_Tops",
+      "number": "69",
+      "image": "/assets/uploads/kazirova_rennen1.png"
     }
   ],
   "races": [],
