@@ -2,7 +2,13 @@
   "tagline": "Gemeinsam schneller.",
   "about_lead": "Vier Asse. Ein Team. Eine gemeinsame Leidenschaft für den virtuellen Motorsport.",
   "about_text": "Willkommen bei 4Aces-Racing! Auf dieser Seite stellen wir unser Team, unsere Fahrer und unsere Rennaktivitäten vor. Weitere Informationen zu unserer Geschichte und unseren Zielen folgen in Kürze.",
-  "drivers": [],
+  "drivers": [
+    {
+      "name": "4ar_Route999",
+      "number": "999",
+      "image": "/assets/uploads/tops_dr_rennen3-6.png"
+    }
+  ],
   "races": [],
   "gallery": [
     {
