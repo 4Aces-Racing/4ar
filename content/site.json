@@ -7,6 +7,10 @@
       "name": "4ar_Route999",
       "number": "999",
       "image": "/assets/uploads/tops_dr_rennen3-6.png"
+    },
+    {
+      "name": "4ar_Snufkin",
+      "description": "Teamchef und Lackierer"
     }
   ],
   "races": [],
