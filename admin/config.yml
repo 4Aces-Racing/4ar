@@ -8,6 +8,8 @@ backend:
 media_folder: assets/uploads
 public_folder: /assets/uploads
 locale: de
+editor:
+  preview: true
 collections:
   - name: website
     label: Website verwalten
