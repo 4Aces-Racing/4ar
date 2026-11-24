@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap');
+:root{--red:#ed101c;--bg:#09090c;--muted:#a5a5ae;--border:#383039}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:105px}body{margin:0;background:var(--bg);color:#fff;font-family:Barlow,Arial,sans-serif}a{color:inherit;text-decoration:none}button{font:inherit}.site-header{position:sticky;top:0;z-index:20;background:rgba(5,5,7,.96);border-bottom:2px solid #b90a14;box-shadow:0 3px 20px #d0001733;backdrop-filter:blur(12px)}.header-inner{max-width:1500px;margin:auto;min-height:175px;padding:8px 35px;display:flex;align-items:center;justify-content:space-between;gap:25px}.brand img{width:280px;height:160px;object-fit:contain;display:block}.navigation{display:flex;align-items:center;gap:3px}.navigation a{font-family:'Barlow Condensed',Arial,sans-serif;font-size:19px;font-weight:700;text-transform:uppercase;padding:14px 14px;transform:skew(-9deg);transition:.2s}.navigation a:hover,.navigation a.active{background:var(--red)}.menu-toggle{display:none;color:white;background:none;border:1px solid #555;padding:8px 13px;font-size:24px;cursor:pointer}.hero{min-height:610px;position:relative;overflow:hidden;background:radial-gradient(ellipse at 80% 65%,#790e1b55,transparent 42%),linear-gradient(110deg,#09090b 10%,#19151a 62%,#09090c);isolation:isolate}.hero:before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(125deg,transparent 0 70px,#ffffff05 71px 73px,transparent 74px 140px);opacity:.55}.hero:after{content:"";position:absolute;bottom:40px;left:0;right:0;height:100px;background:linear-gradient(transparent,#ed101c0b,#09090c);border-bottom:1px solid #d31222}.hero-glow{position:absolute;right:0;top:10%;width:55%;height:80%;background:radial-gradient(ellipse,#ec0e2433,transparent 65%);filter:blur(35px)}.hero-inner{max-width:1500px;min-height:565px;margin:auto;padding:80px 40px 65px;display:grid;grid-template-columns:46% 54%;align-items:center;position:relative}.hero-copy{z-index:2}.eyebrow{font-size:12px;font-weight:700;letter-spacing:3px;color:#ccc}.eyebrow span{display:inline-block;background:var(--red);width:30px;height:3px;vertical-align:middle;margin-right:8px}h1,h2,h3,.statement{font-family:'Barlow Condensed',Impact,Arial,sans-serif}h1{font-size:clamp(60px,7vw,116px);font-weight:900;font-style:italic;letter-spacing:-3px;line-height:.9;margin:22px 0 8px;text-shadow:2px 3px 0 #444}h1 span{color:var(--red);display:block}.hero-subtitle{font-family:'Barlow Condensed',sans-serif;font-size:clamp(23px,3vw,38px);letter-spacing:12px;font-weight:700;margin:12px 0 25px}.red-line{width:120px;height:3px;background:var(--red)}.values{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:1.4px;margin:28px 0 8px}.values b{color:var(--red);margin:0 8px}.hero-tagline{font-size:26px;font-weight:700;font-style:italic;margin:15px 0 30px}.hero-actions{display:flex;gap:12px;flex-wrap:wrap}.btn{padding:15px 23px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:.6px;clip-path:polygon(9% 0,100% 0,91% 100%,0 100%);transition:filter .2s,transform .2s}.btn:hover{filter:brightness(1.3);transform:translateY(-2px)}.btn span{margin-left:20px}.primary{background:var(--red);padding-left:30px}.secondary{border:1px solid #fff;background:#252329;padding-left:30px}.car-wrap{position:relative;z-index:1;align-self:center;min-width:0}.car-halo{position:absolute;inset:24% 5% 15%;background:#c90a1b44;filter:blur(70px)}.hero-car{position:relative;width:125%;max-width:none;margin-left:-12%;height:auto;filter:drop-shadow(0 35px 24px #000b)}.hero-bottom{display:flex;gap:35px;justify-content:center;padding:15px;background:#09090c;font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:4px;color:#d0cdd0}.hero-bottom span+span:before{content:'◆';color:var(--red);margin-right:35px}.quick-links{max-width:1500px;margin:-1px auto 0;padding:25px 30px 50px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.feature{min-height:205px;position:relative;overflow:hidden;background:linear-gradient(140deg,#232026,#09090b 80%);border:1px solid #9c1821;border-bottom:4px solid var(--red);padding:25px 24px;transition:transform .2s,box-shadow .2s}.feature:hover{transform:translateY(-5px);box-shadow:0 10px 35px #f00a}.feature:before{content:"";position:absolute;right:-45px;top:-45px;width:135px;height:135px;transform:rotate(45deg);border:15px solid #e30b1a1c}.feature-icon{color:var(--red);font-size:30px}.feature h2{font-size:30px;margin:9px 0}.feature p{font-size:14px;line-height:1.5;color:#c4c0c4;max-width:210px;margin:0}.feature-arrow{position:absolute;right:18px;bottom:15px;color:var(--red);font-size:25px}.content-section{padding:90px max(35px,calc((100vw - 1370px)/2));border-top:1px solid #30252a;scroll-margin-top:90px}.content-section.alt{background:#111115}.section-head{margin-bottom:36px}.section-number{font-size:13px;letter-spacing:3px;color:var(--red);font-weight:800}.section-head h2{font-size:clamp(44px,5vw,68px);font-style:italic;line-height:1;margin:10px 0}.section-head em{color:var(--red);font-style:inherit}.about-layout{display:grid;grid-template-columns:1.3fr 1fr;gap:55px;align-items:center}.lead{font-size:clamp(21px,2.3vw,29px);font-weight:700;line-height:1.4}.about-layout p:not(.lead),.contact-section>p:not(.lead){color:#b9b7be;line-height:1.8;max-width:700px}.statement{font-size:clamp(33px,4vw,60px);font-weight:900;font-style:italic;line-height:1.05;color:#eee;border-left:4px solid var(--red);padding-left:25px}.statement span{display:block;color:var(--red)}.empty-panel{border:1px solid #413039;background:linear-gradient(110deg,#1b161b,#0b0b0d);padding:40px;min-height:210px}.panel-symbol{color:var(--red);font-size:34px;letter-spacing:10px}.empty-panel h3{font-size:32px;margin:10px 0}.empty-panel p{color:#b7b4ba}.gallery-card{display:grid;grid-template-columns:1.1fr 1fr;gap:35px;align-items:center;border:1px solid #413039;background:#09090b;padding:35px}.gallery-card img{width:100%;height:auto}.gallery-card span{color:var(--red);font-size:13px;letter-spacing:3px;font-weight:800}.gallery-card h3{font-size:40px;margin:12px 0}.gallery-card p{color:#b7b4ba}footer{border-top:2px solid var(--red);text-align:center;padding:35px 20px 45px;background:#050507}footer img{height:100px;width:150px;object-fit:contain}footer p{font-family:'Barlow Condensed',sans-serif;font-size:20px;letter-spacing:3px;font-weight:800}footer p span{color:var(--red)}footer small{color:#999}@media(max-width:1000px){.header-inner{min-height:125px;padding:5px 20px}.brand img{width:190px;height:115px}.menu-toggle{display:block}.navigation{display:none;position:absolute;top:100%;left:0;right:0;background:#0b0b0e;padding:15px 20px 25px;flex-direction:column;align-items:stretch;border-bottom:2px solid var(--red)}.navigation.open{display:flex}.navigation a{transform:none}.hero-inner{grid-template-columns:1fr;gap:20px;padding:60px 30px 20px}.hero-copy{text-align:center}.red-line{margin:auto}.hero-actions{justify-content:center}.hero-car{width:100%;margin:0}.car-wrap{max-width:760px;margin:auto}.quick-links{grid-template-columns:repeat(2,1fr)}.about-layout{gap:30px}}@media(max-width:600px){.hero-inner{padding:48px 18px 25px}h1{font-size:clamp(56px,14vw,85px)}.hero-subtitle{letter-spacing:6px}.values{font-size:16px}.hero-bottom{gap:10px;font-size:11px;letter-spacing:1px}.hero-bottom span+span:before{margin-right:10px}.quick-links{grid-template-columns:1fr;padding:20px 18px 40px}.feature{min-height:155px}.content-section{padding:65px 20px}.about-layout,.gallery-card{grid-template-columns:1fr}.gallery-card{padding:18px}.statement{font-size:36px}.btn{font-size:17px}.hero-tagline{font-size:22px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+
+/* Großes originales Teamlogo – neue Version */
+.header-inner{min-height:255px;gap:16px;padding:10px 28px}
+.brand{flex:0 0 auto}
+.brand img{width:390px;height:235px;object-fit:contain}
+.navigation a{font-size:17px;padding:12px 9px}
+footer img{width:260px;height:175px}
+@media(max-width:1100px){.header-inner{min-height:160px}.brand img{width:245px;height:150px}.navigation a{font-size:16px;padding:10px 8px}}
+@media(max-width:1000px){.header-inner{min-height:160px}.brand img{width:245px;height:150px}}
+@media(max-width:600px){.header-inner{min-height:135px;padding:5px 12px}.brand img{width:205px;height:125px}footer img{width:220px;height:145px}}
+
+/* Entwurf 2: Rennstrecke, großes Original-Logo und originaler BMW */
+.site-header{background:rgba(3,3,5,.97)}
+.header-inner{max-width:1650px;min-height:190px;padding:6px 30px}
+.brand img{width:350px;height:175px;object-fit:contain}
+.hero{min-height:660px;background:linear-gradient(90deg,rgba(0,0,0,.93) 0%,rgba(0,0,0,.72) 38%,rgba(0,0,0,.38) 100%),url('assets/rennstrecke-hintergrund.jpg') center/cover no-repeat,#09090c}
+.hero:before{background:linear-gradient(0deg,rgba(0,0,0,.65),transparent 35%)}
+.hero-inner{max-width:1600px;min-height:620px;grid-template-columns:43% 57%;padding:70px 35px 45px}
+.hero-copy h1{font-size:clamp(65px,7vw,116px)}
+.hero-car{width:130%;margin-left:-15%;filter:drop-shadow(0 32px 19px #000)}
+.quick-links{max-width:1600px}
+.feature{border-top:2px solid #ed101c;transform:skew(-3deg)}
+.feature:hover{transform:skew(-3deg) translateY(-5px)}
+@media(max-width:1100px){.header-inner{min-height:155px}.brand img{width:270px;height:145px}}
+@media(max-width:1000px){.hero-inner{grid-template-columns:1fr;padding:55px 25px 30px}.hero-car{width:100%;margin:0}.hero{min-height:0}.header-inner{min-height:150px}}
+@media(max-width:600px){.header-inner{min-height:126px;padding:5px 12px}.brand img{width:210px;height:116px}.hero-inner{padding:40px 16px 25px}.feature{transform:none}.feature:hover{transform:translateY(-5px)}}
+
+/* Neue Typografie – angelehnt an die dynamische, schräge Schrift des Original-Logos. */
+.hero-copy .eyebrow{font-family:Impact,'Arial Narrow',sans-serif;font-size:clamp(17px,1.65vw,25px);font-style:italic;font-weight:900;letter-spacing:1.1px;text-transform:uppercase;color:#fff;text-shadow:2px 2px 0 #4c4c4c,3px 3px 0 #a60012;transform:skew(-9deg);transform-origin:left center;margin-bottom:26px}
+.hero-copy .eyebrow span{height:5px;width:34px;transform:skew(-20deg)}
+.hero-copy h1.racing-heading{font-family:Impact,'Arial Black','Arial Narrow',sans-serif;font-size:clamp(64px,7.8vw,126px);font-style:italic;font-weight:900;letter-spacing:-2px;line-height:.85;transform:skew(-8deg);transform-origin:left center;margin:18px 0 26px;filter:drop-shadow(4px 5px 0 #070709) drop-shadow(1px 1px 0 #c30b19);text-shadow:none}
+.racing-heading-top{display:block!important;color:#eee!important;background:linear-gradient(180deg,#fff 5%,#eee 37%,#858585 63%,#f6f6f6 83%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.racing-heading-top strong{font-weight:inherit;background:linear-gradient(#ff5a5a 0%,#f00010 48%,#8e0009 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.racing-heading-bottom{display:block!important;color:#f20a18!important;background:linear-gradient(180deg,#ff5b61,#e60010 55%,#8b000b);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px;font-size:.79em;margin-top:9px}
+@media(max-width:1000px){.hero-copy h1.racing-heading,.hero-copy .eyebrow{transform:skew(-8deg);transform-origin:center}}
+@media(max-width:600px){.hero-copy h1.racing-heading{font-size:clamp(54px,13vw,80px);letter-spacing:-1px}.hero-copy .eyebrow{font-size:16px;letter-spacing:.3px}}
+
+/* Teamshop */
+.navigation .shop-link{background:#b80b17;color:#fff;border:1px solid #fa3440;white-space:nowrap}
+.navigation .shop-link:hover{background:#f10b20}
+#teamshop .btn{display:inline-block;margin-top:18px}
+@media(min-width:1001px){.header-inner{gap:8px;padding-inline:18px}.brand img{width:310px}.navigation a{font-size:15px;padding:12px 7px}}
+
+/* Hauptsponsor direkt neben dem originalen Teamlogo */
+.header-inner{justify-content:flex-start;gap:18px}
+.brand{flex-shrink:0}
+.main-sponsor{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0;padding:8px 10px;background:#fff;border:1px solid #e6e6e6;border-radius:5px;transition:box-shadow .2s}
+.main-sponsor:hover{box-shadow:0 0 18px #ed101c99}
+.sponsor-caption{font:800 11px 'Barlow Condensed',Arial,sans-serif;letter-spacing:1.5px;color:#333}
+.main-sponsor img{display:block;width:205px;max-width:100%;height:auto}
+.navigation{margin-left:auto}
+@media(max-width:1400px) and (min-width:1001px){.brand img{width:255px;height:145px}.main-sponsor img{width:160px}.navigation a{font-size:13px;padding:10px 5px}.header-inner{gap:10px;padding-inline:12px}}
+@media(max-width:1000px){.header-inner{justify-content:space-between;gap:12px}.brand img{width:220px;height:125px}.main-sponsor{margin-left:auto}.main-sponsor img{width:180px}.menu-toggle{flex-shrink:0}}
+@media(max-width:600px){.header-inner{min-height:100px;gap:7px;padding:6px 9px}.brand img{width:clamp(115px,34vw,180px);height:auto;max-height:110px}.main-sponsor{padding:4px 5px;gap:3px}.main-sponsor img{width:clamp(90px,28vw,145px)}.sponsor-caption{font-size:8px;letter-spacing:.4px}.menu-toggle{padding:6px 9px;font-size:21px}}
+
+/* Sponsor: mittig auf Höhe des Teamlogos, flacher und breiter */
+.header-inner{align-items:center}
+.main-sponsor{align-self:center;flex-direction:column-reverse;width:265px;min-width:0;padding:7px 10px 5px;gap:4px;border-radius:3px}
+.main-sponsor img{width:245px;height:65px;object-fit:contain}
+.sponsor-caption{font-size:10px;line-height:1.1}
+@media(max-width:1400px) and (min-width:1001px){.main-sponsor{width:205px;padding:5px 7px}.main-sponsor img{width:190px;height:52px}}
+@media(max-width:1000px){.main-sponsor{width:210px;padding:5px 7px}.main-sponsor img{width:195px;height:54px}}
+@media(max-width:600px){.main-sponsor{width:clamp(104px,32vw,165px);padding:3px 4px;gap:2px}.main-sponsor img{width:100%;height:clamp(30px,9vw,45px)}.sponsor-caption{font-size:7px;letter-spacing:0}}
+
+/* Aktualisierung: Hauptsponsor mittig im Kopfbereich und größer */
+@media(min-width:1401px){
+ .header-inner{position:relative;min-height:205px;gap:12px}
+ .main-sponsor{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:310px;padding:9px 12px 7px;z-index:2}
+ .main-sponsor img{width:286px;height:78px;object-fit:contain}
+ .navigation{margin-left:auto}
+ .brand img{width:300px}
+ .navigation a{font-size:14px;padding:11px 6px}
+}
+@media(min-width:1001px) and (max-width:1400px){
+ .main-sponsor{width:245px;padding:7px 9px}
+ .main-sponsor img{width:225px;height:65px}
+ .navigation{margin-left:auto}
+}
+@media(min-width:601px) and (max-width:1000px){
+ .main-sponsor{width:255px;margin-left:auto;margin-right:auto}
+ .main-sponsor img{width:235px;height:66px}
+}
+@media(max-width:600px){
+ .main-sponsor{width:clamp(112px,34vw,185px);margin-left:auto;margin-right:auto}
+ .main-sponsor img{width:100%;height:clamp(35px,10vw,52px)}
+}
+
+/* Die 4 im großen Schriftzug vollständig rot, ohne Weiß- oder Silberverlauf. */
+.racing-heading-top strong { color:#f00010 !important; background:none !important; background-image:none !important; -webkit-background-clip:border-box !important; background-clip:border-box !important; -webkit-text-fill-color:#f00010 !important; }
