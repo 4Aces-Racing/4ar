@@ -38,3 +38,31 @@ v/* Kopfzeile testweise ausblenden */
 .team-brand {
     display: none !important;
 }
+/* 4Aces-Racing Admin – Layout-Korrektur */
+
+.team-brand {
+    display: none !important;
+}
+
+#nc-root {
+    min-height: 100vh !important;
+}
+
+#nc-root [class*="AppHeader"] {
+    top: 0 !important;
+    background: #111115 !important;
+    border-bottom: 2px solid #e51b2b !important;
+}
+
+#nc-root [class*="AppHeader"]::before {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 20px;
+    top: 5px;
+    width: 130px;
+    height: 40px;
+    background: url("/assets/logo.png")
+        left center / contain no-repeat;
+    pointer-events: none;
+}
