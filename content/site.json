@@ -6,7 +6,8 @@
     {
       "name": "4ar_Route999",
       "number": "999",
-      "image": "/assets/uploads/tops_dr_rennen3-6.png"
+      "image": "/assets/uploads/tops_dr_rennen3-6.png",
+      "description": "Co. Chef und Event Verantwortlicher/Ansprechpartner\n"
     },
     {
       "name": "4ar_Snufkin",
@@ -17,7 +18,8 @@
     {
       "name": "4ar_Tops",
       "number": "69",
-      "image": "/assets/uploads/kazirova_rennen1.png"
+      "image": "/assets/uploads/kazirova_rennen1.png",
+      "description": "Fahrer "
     }
   ],
   "races": [],
