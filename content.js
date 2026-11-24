@@ -9,7 +9,7 @@
       const element = root.getElementById(id); if (element && typeof value === 'string') element.textContent = value;
     }
     const drivers = root.getElementById('drivers-list');
-    if (drivers && data.drivers?.length) drivers.innerHTML = data.drivers.map(d => `<article class="cms-card">${d.image ? `<img src="${escapeHTML(d.image)}" alt="">` : ''}<h3>${escapeHTML(d.name)}</h3><p>${escapeHTML(d.number ? 'Startnummer '+d.number : '')}</p><p>${escapeHTML(d.description)}</p></article>`).join('');
+    if (drivers && data.drivers?.length) drivers.innerHTML = data.drivers.map(d => `<article class="cms-card"><div class="driver-photo">${d.image ? `<img src="${escapeHTML(d.image)}" alt="Fahrzeug von ${escapeHTML(d.name)}" loading="lazy">` : '<span class="driver-placeholder">4ACES-RACING</span>'}</div>${d.number != null && d.number !== '' ? `<div class="driver-number" aria-label="Startnummer ${escapeHTML(d.number)}">#${escapeHTML(d.number)}</div>` : ''}<h3>${escapeHTML(d.name)}</h3>${d.description ? `<p>${escapeHTML(d.description)}</p>` : ''}</article>`).join('');
     const races = root.getElementById('races-list');
     if (races && data.races?.length) races.innerHTML = data.races.map(r => `<article class="cms-card"><p>${escapeHTML(r.date)}</p><h3>${escapeHTML(r.title)}</h3><p>${escapeHTML(r.track)}</p><p>${escapeHTML(r.result)}</p></article>`).join('');
     const gallery = root.getElementById('gallery-list');

@@ -92,3 +92,16 @@ footer img{width:260px;height:175px}
 
 /* Dynamische Inhalte aus dem Admin-Bereich */
 .editable-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}.cms-card{background:#141418;border:1px solid #38383e;padding:24px;border-radius:12px;color:#eee}.cms-card img{width:100%;max-height:220px;object-fit:cover;border-radius:8px}.cms-card h3{color:#fff}.cms-card p{overflow-wrap:anywhere}
+
+/* Fahrerübersicht: feste Spalten, vollständige Fahrzeugbilder */
+#drivers-list {grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:22px}
+#drivers-list > .empty-panel {grid-column:1/-1}
+#drivers-list > .cms-card {min-width:0;padding:16px;border:1px solid #65252b;border-top:3px solid #ed101c;border-radius:8px;background:linear-gradient(145deg,#202024,#141418);display:flex;flex-direction:column;gap:10px}
+#drivers-list .driver-photo {width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:#101014;border-radius:5px;overflow:hidden}
+#drivers-list .driver-photo img {display:block;width:100%;height:100%;max-height:none;object-fit:contain;padding:8px}
+#drivers-list .driver-number {color:#ff2936;font-family:Impact,'Arial Narrow',sans-serif;font-size:clamp(30px,3vw,48px);font-style:italic;line-height:1;margin:4px 0 0}
+#drivers-list .cms-card h3 {font-size:clamp(20px,2vw,28px);margin:0;overflow-wrap:anywhere}
+#drivers-list .cms-card p {margin:0;white-space:pre-wrap}
+#drivers-list .driver-placeholder {color:#aaa;font-size:14px}
+@media(max-width:1000px){#drivers-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){#drivers-list{grid-template-columns:minmax(0,1fr)}}
