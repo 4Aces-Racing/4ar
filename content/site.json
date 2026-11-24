@@ -10,7 +10,9 @@
     },
     {
       "name": "4ar_Snufkin",
-      "description": "Teamchef und Lackierer"
+      "description": "Teamchef und Lackierer",
+      "image": "/assets/uploads/porgman_rennen5.png",
+      "number": "4711"
     }
   ],
   "races": [],
