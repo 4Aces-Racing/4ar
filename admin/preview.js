@@ -2,7 +2,7 @@
   const CMS=window.CMS, h=window.h, createClass=window.createClass;
   if(!CMS || !h || !createClass) return;
   CMS.registerPreviewStyle('/style.css');
-  CMS.registerPreviewStyle('/admin/preview.css?v=3');
+  CMS.registerPreviewStyle('/admin/preview.css?v=4');
   CMS.registerPreviewTemplate('inhalte',createClass({render:function(){
     const d=this.props.entry.get('data').toJS();
     const img=(path,alt)=>{if(!path)return null; let src; try {const asset=this.props.getAsset(path); src=asset && asset.toString();}catch(e){} if(!src || src===path) src=/^(https?:|blob:|data:|\/)/i.test(path)?path:'/'+path; return h('img',{src:src,alt:alt||''});};

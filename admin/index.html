@@ -8,7 +8,7 @@
   <title>4Aces-Racing – Admin</title>
 
   <link rel="cms-config-url" type="text/yaml" href="/admin/config.yml">
-  <link rel="stylesheet" href="/admin/team.css?v=2">
+  <link rel="stylesheet" href="/admin/team.css?v=4">
 </head>
 <body>
   <header class="team-brand">
@@ -21,6 +21,27 @@
   </header>
 
   <script src="https://unpkg.com/decap-cms@3.8.3/dist/decap-cms.js"></script>
-  <script src="/admin/preview.js?v=3"></script>
+  <script src="/admin/preview.js?v=4"></script>
+  <script>
+  (function(){
+    function brandToolbar(){
+      const root=document.getElementById('nc-root');
+      if(!root)return;
+      const bars=Array.from(root.querySelectorAll('[class*="EditorToolbar"], [class*="AppHeader"]'));
+      const bar=bars.find(el=>el.getBoundingClientRect().height>0 && el.className.includes('EditorToolbar')) || bars.find(el=>el.getBoundingClientRect().height>0);
+      if(!bar)return;
+      const existing=root.querySelector('.team-toolbar-brand');
+      if(existing && existing.parentElement===bar)return;
+      if(existing)existing.remove();
+      const brand=document.createElement('div'); brand.className='team-toolbar-brand';
+      const img=document.createElement('img'); img.src='/assets/logo.png'; img.alt='4Aces-Racing';
+      const link=document.createElement('a'); link.href='/'; link.target='_blank'; link.rel='noopener noreferrer'; link.textContent='Website öffnen ↗';
+      brand.append(img,link); bar.appendChild(brand);
+    }
+    let pending=false;
+    new MutationObserver(()=>{if(!pending){pending=true;requestAnimationFrame(()=>{pending=false;brandToolbar();});}}).observe(document.body,{childList:true,subtree:true});
+    brandToolbar();
+  })();
+  </script>
 </body>
 </html>
