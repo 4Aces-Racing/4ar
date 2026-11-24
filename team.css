@@ -1,0 +1,22 @@
+/* Scoped to the administration page; CMS functionality remains unchanged. */
+:root { color-scheme: dark; }
+body { margin:0; background:#111115; color:#f5f5f6; font-family:Arial,sans-serif; }
+.team-brand { display:flex; align-items:center; gap:18px; padding:12px 24px; background:#0b0b0e; border-bottom:3px solid #e51b2b; color:white; position:relative; z-index:1; }
+.team-brand img { width:100px; height:65px; object-fit:contain; }
+.team-brand strong { display:block; font-size:24px; font-weight:900; font-style:italic; letter-spacing:1px; }
+.team-brand strong::first-letter { color:#ff2939; }
+.team-brand small { display:block; font-size:10px; letter-spacing:1.5px; margin-top:5px; color:#c4c4ca; }
+.team-brand a { margin-left:auto; color:white; background:#b51220; padding:10px 14px; border-radius:4px; text-decoration:none; font-size:13px; }
+/* Decap uses generated class names; stable class fragments where available. */
+#nc-root { background:#111115; color:#f5f5f6; min-height:calc(100vh - 92px); }
+#nc-root :is([class*="AppHeader"],[class*="Toolbar"],[class*="Sidebar"],[class*="CollectionTop"],[class*="Card"],[class*="ControlPane"],[class*="EditorContainer"],[class*="EditorToolbar"],[class*="ListItem"],[class*="ListControl"],[class*="Modal"],[class*="Dropdown"],[class*="SearchContainer"],[class*="Login"],[class*="CollectionContainer"]) { background-color:#202026 !important; color:#f5f5f6 !important; border-color:#44444c !important; }
+#nc-root :is([class*="AppMain"],[class*="AppContainer"],[class*="CollectionMain"],[class*="EditorContainer"],[class*="ControlPaneContainer"]) { background-color:#111115 !important; }
+#nc-root :is(h1,h2,h3,h4,label) { color:#f5f5f6 !important; }
+#nc-root :is(input:not([type=checkbox]):not([type=radio]),textarea,select) { background:#17171c !important; color:#fff !important; border-color:#64646e !important; }
+#nc-root :is(input,textarea)::placeholder { color:#aaaab4 !important; }
+#nc-root button { background-color:#303039 !important; color:#fff !important; border-color:#55555e !important; }
+#nc-root button:is([class*="Primary"],[class*="primary"],[class*="Publish"],[class*="LoginButton"]) { background-color:#b51220 !important; border-color:#f02b3b !important; }
+#nc-root button:hover { border-color:#ff4755 !important; }
+#nc-root a { color:#ff6874 !important; }
+#nc-root :focus-visible,.team-brand a:focus-visible { outline:2px solid #ff5967 !important; outline-offset:2px; }
+@media(max-width:600px){.team-brand{padding:8px;gap:8px}.team-brand img{width:58px;height:48px}.team-brand strong{font-size:16px}.team-brand small{font-size:8px;letter-spacing:0}.team-brand a{font-size:11px;padding:7px}}
