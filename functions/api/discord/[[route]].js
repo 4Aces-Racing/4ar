@@ -49,6 +49,16 @@ export async function onRequest({request:r,env:e}){try{
  if(!a.member)return json({error:'Keine Mitgliederberechtigung'},403);
  if(!e.DB)throw Object.assign(Error('Datenbankbindung DB fehlt in der aktiven Bereitstellung.'),{stage:'database'});
  if(p==='dashboard'&&method==='GET'){const entries=await Promise.all(Object.entries(tables).map(async ([name,cfg])=>[name,(await e.DB.prepare(`SELECT * FROM ${name} ORDER BY ${cfg.order} LIMIT 500`).all()).results]));return json({profile:profile(s,a),entries:Object.fromEntries(entries)});}
+ const setup=p.match(/^setups(?:\/(\d+))?$/);
+ if(setup){const id=setup[1], fields=["title", "car_class", "track", "weather", "tyres", "bop", "height", "frequency", "bars", "compression", "expansion", "camber", "toe", "diff", "aero", "brakes", "gears", "lap", "description"];
+ if(method==='GET'&&!id){const rows=(await e.DB.prepare('SELECT * FROM vehicle_setups ORDER BY id DESC LIMIT 500').all()).results;return json(rows.map(({owner_id,...row})=>({...row,can_edit:a.admin||owner_id===s.id})));}
+ if(id){const row=await e.DB.prepare('SELECT owner_id FROM vehicle_setups WHERE id=?').bind(id).first();if(!row)return json({error:'Setup nicht gefunden'},404);if(!a.admin&&row.owner_id!==s.id)return json({error:'Keine Bearbeitungsberechtigung'},403);}
+ if(method==='DELETE'&&id){await e.DB.prepare('DELETE FROM vehicle_setups WHERE id=? AND (owner_id=? OR ?=1)').bind(id,s.id,+a.admin).run();return json({ok:true});}
+ if(!(method==='POST'&&!id||method==='PUT'&&id))return json({error:'Methode'},405);
+ if(!r.headers.get('Content-Type')?.startsWith('application/json'))return json({error:'JSON erforderlich'},415);
+ const raw=await r.text();if(raw.length>40000)return json({error:'Zu lang'},413);let d;try{d=JSON.parse(raw);}catch{return json({error:'Ungültige Eingabe'},400);}
+ if(!d||fields.some(k=>typeof d[k]!=='string'||d[k].length>2000)||!d.title.trim()||!d.track.trim())return json({error:'Fahrzeug und Strecke erforderlich; maximal 2000 Zeichen je Feld'},400);
+ const vals=fields.map(k=>d[k].trim());if(id)await e.DB.prepare('UPDATE vehicle_setups SET '+fields.map(k=>k+'=?').join(',')+' WHERE id=? AND (owner_id=? OR ?=1)').bind(...vals,id,s.id,+a.admin).run();else await e.DB.prepare('INSERT INTO vehicle_setups ('+fields.join(',')+',owner_id,author) VALUES ('+fields.map(()=>'?').join(',')+',?,?)').bind(...vals,s.id,s.name).run();return json({ok:true});}
  const signup=p.match(/^attendance\/(\d+)$/);
  if(signup){
   const race=signup[1];
