@@ -12,7 +12,26 @@ async function seal(e,v){const iv=crypto.getRandomValues(new Uint8Array(12));ret
 async function open(e,s){try{const [iv,data]=s.split('.');const v=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:un64(iv)},await key(e),un64(data))));return v.exp>Date.now()?v:null;}catch{return null;}}
 const roles=(s)=>String(s||'').split(',').map(x=>x.trim()).filter(x=>/^\d+$/.test(x));
 async function discord(path,token){return fetch(API+path,{headers:{Authorization:'Bearer '+token}});}
-async function access(e,s){const r=await discord('/users/@me/guilds/'+e.DISCORD_GUILD_ID+'/member',s.token);if(r.status===404)return {member:false,admin:false};if(r.status===401)throw Object.assign(Error('Discord-Sitzung abgelaufen. Bitte erneut anmelden.'),{status:401,stage:'discord'});if(!r.ok)throw Object.assign(Error('Discord-Rollenprüfung fehlgeschlagen (HTTP '+r.status+').'),{status:503,stage:'discord'});const m=await r.json();const admin=roles(e.DISCORD_ADMIN_ROLE_IDS).some(x=>m.roles.includes(x));return {admin,member:admin||roles(e.DISCORD_MEMBER_ROLE_IDS).some(x=>m.roles.includes(x))};}
+// Cache only verified roles, keyed by the encrypted session's token hash.
+const TTL=300000;
+async function access(e,s){
+ const digest=b64(await crypto.subtle.digest('SHA-256',enc.encode(s.token+'|'+e.DISCORD_GUILD_ID)));
+ const cache=caches.default, k=new Request(ROOT+'/api/discord/__private_role_cache/'+digest);
+ let saved; try{const hit=await cache.match(k);if(hit)saved=await hit.json();}catch{}
+ if(saved?.until>Date.now()){
+  if(saved.blocked)throw Object.assign(Error('Discord begrenzt Anfragen. Bitte in '+Math.ceil((saved.until-Date.now())/1000)+' Sekunden erneut versuchen.'),{status:429,stage:'discord'});
+  return permissions(e,saved.roles);
+ }
+ const r=await discord('/users/@me/guilds/'+e.DISCORD_GUILD_ID+'/member',s.token);
+ if(r.status===429){let body={};try{body=await r.json();}catch{} const seconds=Math.max(1,Number(r.headers.get('Retry-After'))||0,Number(body.retry_after)||0,Number(r.headers.get('X-RateLimit-Reset-After'))||0);const until=Date.now()+seconds*1000;try{await cache.put(k,Response.json({blocked:true,until},{headers:{'Cache-Control':'public, max-age='+Math.ceil(seconds)}}));}catch{} throw Object.assign(Error('Discord begrenzt Anfragen. Bitte in '+Math.ceil(seconds)+' Sekunden erneut versuchen.'),{status:429,stage:'discord'});}
+ if(r.status===401)throw Object.assign(Error('Discord-Sitzung abgelaufen. Bitte erneut anmelden.'),{status:401,stage:'discord'});
+ if(!r.ok&&r.status!==404)throw Object.assign(Error('Discord-Rollenprüfung fehlgeschlagen (HTTP '+r.status+').'),{status:503,stage:'discord'});
+ const list=r.status===404?[]:(await r.json()).roles;if(!Array.isArray(list))throw Error('roles');
+ const until=Math.min(Date.now()+TTL,s.exp);try{await cache.put(k,Response.json({roles:list,until},{headers:{'Cache-Control':'public, max-age='+Math.max(1,Math.floor((until-Date.now())/1000))}}));}catch{}
+ return permissions(e,list);
+}
+function permissions(e,list){const admin=roles(e.DISCORD_ADMIN_ROLE_IDS).some(x=>list.includes(x));return {admin,member:admin||roles(e.DISCORD_MEMBER_ROLE_IDS).some(x=>list.includes(x))};}
+function profile(s,a){return {name:s.name,avatar:s.avatar&&/^\d+$/.test(s.id)&&/^[a-zA-Z0-9_]+$/.test(s.avatar)?`https://cdn.discordapp.com/avatars/${s.id}/${s.avatar}.png?size=64`:null,...a};}
 const tables={team_news:{fields:['title','content'],required:['title','content'],order:'id DESC'},race_calendar:{fields:['title','race_date','race_time','track','description'],required:['title','race_date'],order:'race_date ASC, race_time ASC'},race_results:{fields:['race_date','title','track','driver','position','points','description'],required:['race_date','title','driver'],order:'race_date DESC, id DESC'}};
 export async function onRequest({request:r,env:e}){try{
  const u=new URL(r.url), p=u.pathname.replace(/^\/api\/discord\/?/,''), method=r.method;
@@ -25,10 +44,11 @@ export async function onRequest({request:r,env:e}){try{
  if(p==='logout'&&method==='POST')return redirect('/members/',[cookie('ar_session','',0)]);
  const s=await open(e,getCookie(r,'ar_session')||'');if(!s)return json({error:'Bitte anmelden'},401);
  const a=await access(e,s);
- if(p==='me'&&method==='GET')return json({name:s.name,avatar:s.avatar&&/^\d+$/.test(s.id)&&/^[a-zA-Z0-9_]+$/.test(s.avatar)?`https://cdn.discordapp.com/avatars/${s.id}/${s.avatar}.png?size=64`:null,...a});
+ if(p==='me'&&method==='GET')return json(profile(s,a));
+ if(p==='dashboard'&&method==='GET'&&!a.member)return json({profile:profile(s,a),entries:{}});
  if(!a.member)return json({error:'Keine Mitgliederberechtigung'},403);
  if(!e.DB)throw Object.assign(Error('Datenbankbindung DB fehlt in der aktiven Bereitstellung.'),{stage:'database'});
- if(p==='dashboard'&&method==='GET'){const entries=await Promise.all(Object.entries(tables).map(async ([name,cfg])=>[name,(await e.DB.prepare(`SELECT * FROM ${name} ORDER BY ${cfg.order} LIMIT 500`).all()).results]));return json(Object.fromEntries(entries));}
+ if(p==='dashboard'&&method==='GET'){const entries=await Promise.all(Object.entries(tables).map(async ([name,cfg])=>[name,(await e.DB.prepare(`SELECT * FROM ${name} ORDER BY ${cfg.order} LIMIT 500`).all()).results]));return json({profile:profile(s,a),entries:Object.fromEntries(entries)});}
  const [table,id,extra]=p.split('/');if(!Object.hasOwn(tables,table)||extra||id&&!/^\d+$/.test(id))return json({error:'Nicht gefunden'},404);const cfg=tables[table];
  if(method==='GET'&&!id){const result=await e.DB.prepare(`SELECT * FROM ${table} ORDER BY ${cfg.order} LIMIT 500`).all();return json(result.results);}
  if(!a.admin)return json({error:'Keine Bearbeitungsberechtigung'},403);
