@@ -12,7 +12,7 @@ async function seal(e,v){const iv=crypto.getRandomValues(new Uint8Array(12));ret
 async function open(e,s){try{const [iv,data]=s.split('.');const v=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:un64(iv)},await key(e),un64(data))));return v.exp>Date.now()?v:null;}catch{return null;}}
 const roles=(s)=>String(s||'').split(',').map(x=>x.trim()).filter(x=>/^\d+$/.test(x));
 async function discord(path,token){return fetch(API+path,{headers:{Authorization:'Bearer '+token}});}
-async function access(e,s){const r=await discord('/users/@me/guilds/'+e.DISCORD_GUILD_ID+'/member',s.token);if(r.status===404)return {member:false,admin:false};if(!r.ok)throw Error('Discord unavailable');const m=await r.json();const admin=roles(e.DISCORD_ADMIN_ROLE_IDS).some(x=>m.roles.includes(x));return {admin,member:admin||roles(e.DISCORD_MEMBER_ROLE_IDS).some(x=>m.roles.includes(x))};}
+async function access(e,s){const r=await discord('/users/@me/guilds/'+e.DISCORD_GUILD_ID+'/member',s.token);if(r.status===404)return {member:false,admin:false};if(r.status===401)throw Object.assign(Error('Discord-Sitzung abgelaufen. Bitte erneut anmelden.'),{status:401,stage:'discord'});if(!r.ok)throw Object.assign(Error('Discord-Rollenprüfung fehlgeschlagen (HTTP '+r.status+').'),{status:503,stage:'discord'});const m=await r.json();const admin=roles(e.DISCORD_ADMIN_ROLE_IDS).some(x=>m.roles.includes(x));return {admin,member:admin||roles(e.DISCORD_MEMBER_ROLE_IDS).some(x=>m.roles.includes(x))};}
 const tables={team_news:{fields:['title','content'],required:['title','content'],order:'id DESC'},race_calendar:{fields:['title','race_date','race_time','track','description'],required:['title','race_date'],order:'race_date ASC, race_time ASC'},race_results:{fields:['race_date','title','track','driver','position','points','description'],required:['race_date','title','driver'],order:'race_date DESC, id DESC'}};
 export async function onRequest({request:r,env:e}){try{
  const u=new URL(r.url), p=u.pathname.replace(/^\/api\/discord\/?/,''), method=r.method;
@@ -27,6 +27,8 @@ export async function onRequest({request:r,env:e}){try{
  const a=await access(e,s);
  if(p==='me'&&method==='GET')return json({name:s.name,avatar:s.avatar&&/^\d+$/.test(s.id)&&/^[a-zA-Z0-9_]+$/.test(s.avatar)?`https://cdn.discordapp.com/avatars/${s.id}/${s.avatar}.png?size=64`:null,...a});
  if(!a.member)return json({error:'Keine Mitgliederberechtigung'},403);
+ if(!e.DB)throw Object.assign(Error('Datenbankbindung DB fehlt in der aktiven Bereitstellung.'),{stage:'database'});
+ if(p==='dashboard'&&method==='GET'){const entries=await Promise.all(Object.entries(tables).map(async ([name,cfg])=>[name,(await e.DB.prepare(`SELECT * FROM ${name} ORDER BY ${cfg.order} LIMIT 500`).all()).results]));return json(Object.fromEntries(entries));}
  const [table,id,extra]=p.split('/');if(!Object.hasOwn(tables,table)||extra||id&&!/^\d+$/.test(id))return json({error:'Nicht gefunden'},404);const cfg=tables[table];
  if(method==='GET'&&!id){const result=await e.DB.prepare(`SELECT * FROM ${table} ORDER BY ${cfg.order} LIMIT 500`).all();return json(result.results);}
  if(!a.admin)return json({error:'Keine Bearbeitungsberechtigung'},403);
@@ -38,4 +40,4 @@ export async function onRequest({request:r,env:e}){try{
  const vals=[];for(const f of cfg.fields){let v=data[f];if(f==='position'||f==='points'){if(v==null||v==='')v=null;else {v=Number(v);if(!Number.isFinite(v)||(f==='position'&&(!Number.isInteger(v)||v<1)))return json({error:'Ungültige Zahl'},400);}}else{if(v!=null&&typeof v!=='string')return json({error:'Ungültiger Text'},400);v=(v||'').trim();if(v.length>10000||cfg.required.includes(f)&&!v)return json({error:'Pflichtfeld oder Länge prüfen'},400);if(f==='race_date'&&!/^\d{4}-\d{2}-\d{2}$/.test(v))return json({error:'Datum prüfen'},400);}vals.push(v);}
  const fields=[...cfg.fields];if(table==='team_news'&&method==='POST'){fields.push('author');vals.push(s.name);}
  if(method==='POST')await e.DB.prepare(`INSERT INTO ${table} (${fields.join(',')}) VALUES (${fields.map(()=>'?').join(',')})`).bind(...vals).run();else await e.DB.prepare(`UPDATE ${table} SET ${fields.map(f=>f+'=?').join(',')} WHERE id=?`).bind(...vals,id).run();return json({ok:true});
- }catch{return json({error:'Dienst momentan nicht verfügbar. Bitte erneut anmelden oder später versuchen.'},503);}}
+ }catch(err){const stage=err.stage||(/D1|SQLITE|database|no such table/i.test(String(err.message))?'database':'server');console.error('4AR API failure',stage,err.name);return json({error:err.stage?err.message:stage==='database'?'Datenbankabfrage fehlgeschlagen. Bitte Cloudflare-D1 prüfen.':'Serverfehler bei der Verarbeitung.',stage},err.status||503);}}
