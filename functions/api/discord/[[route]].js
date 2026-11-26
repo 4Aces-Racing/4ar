@@ -49,10 +49,24 @@ export async function onRequest({request:r,env:e}){try{
  if(!a.member)return json({error:'Keine Mitgliederberechtigung'},403);
  if(!e.DB)throw Object.assign(Error('Datenbankbindung DB fehlt in der aktiven Bereitstellung.'),{stage:'database'});
  if(p==='dashboard'&&method==='GET'){const entries=await Promise.all(Object.entries(tables).map(async ([name,cfg])=>[name,(await e.DB.prepare(`SELECT * FROM ${name} ORDER BY ${cfg.order} LIMIT 500`).all()).results]));return json({profile:profile(s,a),entries:Object.fromEntries(entries)});}
+ const signup=p.match(/^attendance\/(\d+)$/);
+ if(signup){
+  const race=signup[1];
+  if(!['GET','PUT'].includes(method))return json({error:'Methode'},405);
+  if(method==='PUT'){
+   if(!r.headers.get('Content-Type')?.startsWith('application/json'))return json({error:'JSON erforderlich'},415);
+   let data;try{const raw=await r.text();if(raw.length>1024)return json({error:'Zu lang'},413);data=JSON.parse(raw);}catch{return json({error:'Ungültige Eingabe'},400);}
+   if(!['yes','maybe','no'].includes(data?.status))return json({error:'Ungültige Teilnahme'},400);
+   const result=await e.DB.prepare(`INSERT INTO race_attendance (race_id,discord_id,display_name,avatar,status) SELECT id,?,?,?,? FROM race_calendar WHERE id=? ON CONFLICT(race_id,discord_id) DO UPDATE SET display_name=excluded.display_name,avatar=excluded.avatar,status=excluded.status`).bind(s.id,s.name,profile(s,a).avatar,data.status,race).run();
+   if(!result.meta.changes)return json({error:'Rennen nicht gefunden'},404);
+  }
+  const rows=(await e.DB.prepare(`SELECT display_name,avatar,status,discord_id=? AS mine FROM race_attendance WHERE race_id=? ORDER BY display_name COLLATE NOCASE`).bind(s.id,race).all()).results;
+  return json(rows);
+ }
  const [table,id,extra]=p.split('/');if(!Object.hasOwn(tables,table)||extra||id&&!/^\d+$/.test(id))return json({error:'Nicht gefunden'},404);const cfg=tables[table];
  if(method==='GET'&&!id){const result=await e.DB.prepare(`SELECT * FROM ${table} ORDER BY ${cfg.order} LIMIT 500`).all();return json(result.results);}
  if(!a.admin)return json({error:'Keine Bearbeitungsberechtigung'},403);
- if(method==='DELETE'&&id){await e.DB.prepare(`DELETE FROM ${table} WHERE id=?`).bind(id).run();return json({ok:true});}
+ if(method==='DELETE'&&id){if(table==='race_calendar'){await e.DB.batch([e.DB.prepare('DELETE FROM race_attendance WHERE race_id=?').bind(id),e.DB.prepare('DELETE FROM race_calendar WHERE id=?').bind(id)]);}else await e.DB.prepare(`DELETE FROM ${table} WHERE id=?`).bind(id).run();return json({ok:true});}
  if(!((method==='POST'&&!id)||(method==='PUT'&&id)))return json({error:'Methode'},405);
  if(!r.headers.get('Content-Type')?.startsWith('application/json'))return json({error:'JSON erforderlich'},415);
  const raw=await r.text();if(raw.length>40000)return json({error:'Zu lang'},413);let data;try{data=JSON.parse(raw);}catch{return json({error:'Ungültige Eingabe'},400);}
