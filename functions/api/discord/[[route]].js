@@ -35,12 +35,17 @@ function profile(s,a){return {name:s.name,avatar:s.avatar&&/^\d+$/.test(s.id)&&/
 const tables={team_news:{fields:['title','content'],required:['title','content'],order:'id DESC'},race_calendar:{fields:['title','race_date','race_time','track','description'],required:['title','race_date'],order:'race_date ASC, race_time ASC'},race_results:{fields:['race_date','title','track','driver','position','points','description'],required:['race_date','title','driver'],order:'race_date DESC, id DESC'}};
 // Notifications are sent only after successful creation; never ping roles or users.
 async function notify(e,title,lines){
+ console.log('4AR Webhook: Aufruf',title);
  try {
-  const u=new URL(e.DISCORD_WEBHOOK_URL||'');
-  if(u.origin!=='https://discord.com'||!/^\/api\/(?:v\d+\/)?webhooks\/\d+\/[A-Za-z0-9_-]+$/.test(u.pathname))return false;
-  const response=await fetch(u.origin+u.pathname,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json'},body:JSON.stringify({allowed_mentions:{parse:[]},embeds:[{title,description:lines.filter(Boolean).join('\n').slice(0,3900),color:0xc8102e,url:ROOT+'/members/',footer:{text:'4Aces Racing · You Never Race Alone'}}]}),signal:AbortSignal.timeout(5000)});
-  return response.ok;
- }catch{return false;}
+  const raw=e.DISCORD_WEBHOOK_URL;
+  if(typeof raw!=='string'||!raw.trim()){console.error('4AR Webhook: Secret fehlt');return false;}
+  let u;try{u=new URL(raw.trim());}catch{console.error('4AR Webhook: URL ungueltig');return false;}
+  if(!['https://discord.com','https://discordapp.com'].includes(u.origin)||u.username||u.password||!/^\/api\/(?:v\d+\/)?webhooks\/\d+\/[A-Za-z0-9_-]+\/?$/.test(u.pathname)){console.error('4AR Webhook: URL-Format nicht erlaubt');return false;}
+  const response=await fetch('https://discord.com'+u.pathname.replace(/\/$/,'')+'?wait=true',{method:'POST',redirect:'error',headers:{'Content-Type':'application/json'},body:JSON.stringify({allowed_mentions:{parse:[]},embeds:[{title,description:lines.filter(Boolean).join('\n').slice(0,3900),color:0xc8102e,url:ROOT+'/members/',footer:{text:'4Aces Racing · You Never Race Alone'}}]}),signal:AbortSignal.timeout(8000)});
+  console.log('4AR Webhook: Discord HTTP',response.status);
+  if(!response.ok){let code=null;try{const d=await response.json();if(typeof d.code==='number')code=d.code;}catch{}console.error('4AR Webhook: Discord Fehler',response.status,code);return false;}
+  console.log('4AR Webhook: Nachricht versendet');return true;
+ }catch(err){console.error('4AR Webhook: Versand fehlgeschlagen',err.name);return false;}
 }
 export async function onRequest({request:r,env:e}){try{
  const u=new URL(r.url), p=u.pathname.replace(/^\/api\/discord\/?/,''), method=r.method;
