@@ -36,22 +36,18 @@ const tables={team_news:{fields:['title','content'],required:['title','content']
 // Notifications are sent only after successful creation; never ping roles or users.
 async function notify(e,title,lines){
  console.log('4AR Webhook: Aufruf',title);
- let timer;
  let stage='validation';
  try {
   const raw=e.DISCORD_WEBHOOK_URL;
   if(typeof raw!=='string'||!raw.trim()){console.error('4AR Webhook: Secret fehlt');return false;}
   let u;try{u=new URL(raw.trim());}catch{console.error('4AR Webhook: URL ungueltig');return false;}
   if(!['https://discord.com','https://discordapp.com'].includes(u.origin)||u.username||u.password||!/^\/api\/(?:v\d+\/)?webhooks\/\d+\/[A-Za-z0-9_-]+\/?$/.test(u.pathname)){console.error('4AR Webhook: URL-Format nicht erlaubt');return false;}
-  stage='timeout';
-  const controller=new AbortController();
-  timer=setTimeout(()=>controller.abort(),8000);
   stage='fetch';
-  const response=await fetch('https://discord.com'+u.pathname.replace(/\/$/,'')+'?wait=true',{method:'POST',redirect:'error',headers:{'Content-Type':'application/json'},body:JSON.stringify({allowed_mentions:{parse:[]},embeds:[{title,description:lines.filter(Boolean).join('\n').slice(0,3900),color:0xc8102e,url:ROOT+'/members/',footer:{text:'4Aces Racing · You Never Race Alone'}}]}),signal:controller.signal});
+  const response=await fetch('https://discord.com'+u.pathname.replace(/\/$/,'')+'?wait=true',{method:'POST',redirect:'manual',headers:{'Content-Type':'application/json'},body:JSON.stringify({allowed_mentions:{parse:[]},embeds:[{title,description:lines.filter(Boolean).join('\n').slice(0,3900),color:0xc8102e,url:ROOT+'/members/',footer:{text:'4Aces Racing · You Never Race Alone'}}]})});
   console.log('4AR Webhook: Discord HTTP',response.status);
   if(!response.ok){let code=null;try{const d=await response.json();if(typeof d.code==='number')code=d.code;}catch{}console.error('4AR Webhook: Discord Fehler',response.status,code);return false;}
   console.log('4AR Webhook: Nachricht versendet');return true;
- }catch(err){console.error('4AR Webhook: Versand fehlgeschlagen',stage,err.name);return false;}finally{if(timer!==undefined)clearTimeout(timer);}
+ }catch(err){const message=String(err?.message||''); const known=['fetch failed','network connection lost','invalid url','invalid request','illegal invocation','redirect','subrequest','timeout','aborted','too many','dns','tls','ssl','not implemented','unsupported']; const reason=known.filter(x=>message.toLowerCase().includes(x)); console.error('4AR Webhook: Versand fehlgeschlagen',stage,err?.name||'Error',reason.length?reason.join(', '):'Unklassifizierter Fehler');return false;}
 }
 export async function onRequest({request:r,env:e}){try{
  const u=new URL(r.url), p=u.pathname.replace(/^\/api\/discord\/?/,''), method=r.method;
