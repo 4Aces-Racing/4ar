@@ -49,9 +49,21 @@ export async function onRequest({request:r,env:e}){try{
  if(!a.member)return json({error:'Keine Mitgliederberechtigung'},403);
  if(!e.DB)throw Object.assign(Error('Datenbankbindung DB fehlt in der aktiven Bereitstellung.'),{stage:'database'});
  if(p==='dashboard'&&method==='GET'){const entries=await Promise.all(Object.entries(tables).map(async ([name,cfg])=>[name,(await e.DB.prepare(`SELECT * FROM ${name} ORDER BY ${cfg.order} LIMIT 500`).all()).results]));return json({profile:profile(s,a),entries:Object.fromEntries(entries)});}
+ if(p==='profiles'&&method==='GET'){
+ const rows=(await e.DB.prepare('SELECT * FROM member_profiles ORDER BY display_name COLLATE NOCASE').all()).results;
+ const own=rows.find(x=>x.discord_id===s.id)||{};
+ return json({own, members:rows.map(({discord_id,...x})=>({...x,mine:discord_id===s.id,...(a.admin?{id:discord_id}:{})})),role:a.admin?'Teamleitung':'Mitglied'});
+ }
+ if(p==='profiles'&&method==='PUT'){
+ const raw=await r.text();if(raw.length>4096)return json({error:'Zu lang'},413);let d;try{d=JSON.parse(raw);}catch{return json({error:'Ungültige Eingabe'},400);}
+ const fields=['psn_name','driver_name','start_number','favorite_car','favorite_track'];
+ if(!d||fields.some(k=>typeof d[k]!=='string'||d[k].length>120))return json({error:'Maximal 120 Zeichen je Feld'},400);
+ await e.DB.prepare(`INSERT INTO member_profiles (discord_id,display_name,avatar,${fields.join(',')}) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT(discord_id) DO UPDATE SET display_name=excluded.display_name,avatar=excluded.avatar,${fields.map(k=>k+'=excluded.'+k).join(',')},updated_at=CURRENT_TIMESTAMP`).bind(s.id,s.name,profile(s,a).avatar||'',...fields.map(k=>d[k].trim())).run();return json({ok:true});
+ }
+ if(/^profiles\/\d+$/.test(p)&&method==='DELETE'&&a.admin){await e.DB.prepare('DELETE FROM member_profiles WHERE discord_id=?').bind(p.split('/')[1]).run();return json({ok:true});}
  const setup=p.match(/^setups(?:\/(\d+))?$/);
  if(setup){const id=setup[1], fields=["title", "car_class", "track", "weather", "tyres", "bop", "height", "frequency", "bars", "compression", "expansion", "camber", "toe", "diff", "aero", "brakes", "gears", "lap", "description", "test_status", "image_url"];
- if(method==='GET'&&!id){const rows=(await e.DB.prepare('SELECT * FROM vehicle_setups ORDER BY id DESC LIMIT 500').all()).results;return json(rows.map(({owner_id,...row})=>({...row,can_edit:a.admin||owner_id===s.id})));}
+ if(method==='GET'&&!id){const rows=(await e.DB.prepare('SELECT * FROM vehicle_setups ORDER BY id DESC LIMIT 500').all()).results;return json(rows.map(({owner_id,...row})=>({...row,mine:owner_id===s.id,can_edit:a.admin||owner_id===s.id})));}
  if(id){const row=await e.DB.prepare('SELECT owner_id FROM vehicle_setups WHERE id=?').bind(id).first();if(!row)return json({error:'Setup nicht gefunden'},404);if(!a.admin&&row.owner_id!==s.id)return json({error:'Keine Bearbeitungsberechtigung'},403);}
  if(method==='DELETE'&&id){await e.DB.prepare('DELETE FROM vehicle_setups WHERE id=? AND (owner_id=? OR ?=1)').bind(id,s.id,+a.admin).run();return json({ok:true});}
  if(!(method==='POST'&&!id||method==='PUT'&&id))return json({error:'Methode'},405);
