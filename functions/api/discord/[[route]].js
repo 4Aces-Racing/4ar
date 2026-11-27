@@ -33,6 +33,15 @@ async function access(e,s){
 function permissions(e,list){const admin=roles(e.DISCORD_ADMIN_ROLE_IDS).some(x=>list.includes(x));return {admin,member:admin||roles(e.DISCORD_MEMBER_ROLE_IDS).some(x=>list.includes(x))};}
 function profile(s,a){return {name:s.name,avatar:s.avatar&&/^\d+$/.test(s.id)&&/^[a-zA-Z0-9_]+$/.test(s.avatar)?`https://cdn.discordapp.com/avatars/${s.id}/${s.avatar}.png?size=64`:null,...a};}
 const tables={team_news:{fields:['title','content'],required:['title','content'],order:'id DESC'},race_calendar:{fields:['title','race_date','race_time','track','description'],required:['title','race_date'],order:'race_date ASC, race_time ASC'},race_results:{fields:['race_date','title','track','driver','position','points','description'],required:['race_date','title','driver'],order:'race_date DESC, id DESC'}};
+// Notifications are sent only after successful creation; never ping roles or users.
+async function notify(e,title,lines){
+ try {
+  const u=new URL(e.DISCORD_WEBHOOK_URL||'');
+  if(u.origin!=='https://discord.com'||!/^\/api\/(?:v\d+\/)?webhooks\/\d+\/[A-Za-z0-9_-]+$/.test(u.pathname))return false;
+  const response=await fetch(u.origin+u.pathname,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json'},body:JSON.stringify({allowed_mentions:{parse:[]},embeds:[{title,description:lines.filter(Boolean).join('\n').slice(0,3900),color:0xc8102e,url:ROOT+'/members/',footer:{text:'4Aces Racing · You Never Race Alone'}}]}),signal:AbortSignal.timeout(5000)});
+  return response.ok;
+ }catch{return false;}
+}
 export async function onRequest({request:r,env:e}){try{
  const u=new URL(r.url), p=u.pathname.replace(/^\/api\/discord\/?/,''), method=r.method;
  if(u.origin!==ROOT)return json({error:'Nur Produktionsdomain'},403);
@@ -70,7 +79,7 @@ export async function onRequest({request:r,env:e}){try{
  if(!r.headers.get('Content-Type')?.startsWith('application/json'))return json({error:'JSON erforderlich'},415);
  const raw=await r.text();if(raw.length>40000)return json({error:'Zu lang'},413);let d;try{d=JSON.parse(raw);}catch{return json({error:'Ungültige Eingabe'},400);}
  if(!d||fields.some(k=>typeof d[k]!=='string'||d[k].length>2000)||!d.title.trim()||!d.track.trim())return json({error:'Fahrzeug und Strecke erforderlich; maximal 2000 Zeichen je Feld'},400);
- if(d.image_url){try{if(new URL(d.image_url).protocol!=='https:')throw Error();}catch{return json({error:'Bildlink muss HTTPS verwenden'},400);}}if(!['','Getestet','Ungetestet'].includes(d.test_status))return json({error:'Ungültiger Teststatus'},400);const vals=fields.map(k=>d[k].trim());if(id)await e.DB.prepare('UPDATE vehicle_setups SET '+fields.map(k=>k+'=?').join(',')+' WHERE id=? AND (owner_id=? OR ?=1)').bind(...vals,id,s.id,+a.admin).run();else await e.DB.prepare('INSERT INTO vehicle_setups ('+fields.join(',')+',owner_id,author) VALUES ('+fields.map(()=>'?').join(',')+',?,?)').bind(...vals,s.id,s.name).run();return json({ok:true});}
+ if(d.image_url){try{if(new URL(d.image_url).protocol!=='https:')throw Error();}catch{return json({error:'Bildlink muss HTTPS verwenden'},400);}}if(!['','Getestet','Ungetestet'].includes(d.test_status))return json({error:'Ungültiger Teststatus'},400);const vals=fields.map(k=>d[k].trim());if(id)await e.DB.prepare('UPDATE vehicle_setups SET '+fields.map(k=>k+'=?').join(',')+' WHERE id=? AND (owner_id=? OR ?=1)').bind(...vals,id,s.id,+a.admin).run();else await e.DB.prepare('INSERT INTO vehicle_setups ('+fields.join(',')+',owner_id,author) VALUES ('+fields.map(()=>'?').join(',')+',?,?)').bind(...vals,s.id,s.name).run();if(!id){const sent=await notify(e,'Neues Fahrzeugsetup',[d.title,d.track,[d.car_class,d.weather,d.tyres].filter(Boolean).join(' · '),'Von: '+s.name]);return json({ok:true,notification_sent:sent});}return json({ok:true});}
  const signup=p.match(/^attendance\/(\d+)$/);
  if(signup){
   const race=signup[1];
@@ -95,5 +104,9 @@ export async function onRequest({request:r,env:e}){try{
  if(!data||typeof data!=='object'||Array.isArray(data))return json({error:'Ungültige Eingabe'},400);
  const vals=[];for(const f of cfg.fields){let v=data[f];if(f==='position'||f==='points'){if(v==null||v==='')v=null;else {v=Number(v);if(!Number.isFinite(v)||(f==='position'&&(!Number.isInteger(v)||v<1)))return json({error:'Ungültige Zahl'},400);}}else{if(v!=null&&typeof v!=='string')return json({error:'Ungültiger Text'},400);v=(v||'').trim();if(v.length>10000||cfg.required.includes(f)&&!v)return json({error:'Pflichtfeld oder Länge prüfen'},400);if(f==='race_date'&&!/^\d{4}-\d{2}-\d{2}$/.test(v))return json({error:'Datum prüfen'},400);}vals.push(v);}
  const fields=[...cfg.fields];if(table==='team_news'&&method==='POST'){fields.push('author');vals.push(s.name);}
- if(method==='POST')await e.DB.prepare(`INSERT INTO ${table} (${fields.join(',')}) VALUES (${fields.map(()=>'?').join(',')})`).bind(...vals).run();else await e.DB.prepare(`UPDATE ${table} SET ${fields.map(f=>f+'=?').join(',')} WHERE id=?`).bind(...vals,id).run();return json({ok:true});
+ if(method==='POST')await e.DB.prepare(`INSERT INTO ${table} (${fields.join(',')}) VALUES (${fields.map(()=>'?').join(',')})`).bind(...vals).run();else await e.DB.prepare(`UPDATE ${table} SET ${fields.map(f=>f+'=?').join(',')} WHERE id=?`).bind(...vals,id).run();
+ if(method==='POST'){
+ const messages={team_news:['Neue Teamnews',[data.title,data.content,'Von: '+s.name]],race_calendar:['Neuer Renntermin',[data.title,data.race_date+' · '+(data.race_time||''),data.track,data.description]],race_results:['Neues Rennergebnis',[data.title,data.driver,'Platz: '+(data.position??'–')+' · Punkte: '+(data.points??'–'),data.track,data.race_date]]};
+ const [title,lines]=messages[table];return json({ok:true,notification_sent:await notify(e,title,lines)});
+ }return json({ok:true});
  }catch(err){const stage=err.stage||(/D1|SQLITE|database|no such table/i.test(String(err.message))?'database':'server');console.error('4AR API failure',stage,err.name);return json({error:err.stage?err.message:stage==='database'?'Datenbankabfrage fehlgeschlagen. Bitte Cloudflare-D1 prüfen.':'Serverfehler bei der Verarbeitung.',stage},err.status||503);}}
