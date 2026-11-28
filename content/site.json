@@ -4,22 +4,82 @@
   "about_text": "Willkommen bei 4Aces-Racing! Auf dieser Seite stellen wir unser Team, unsere Fahrer und unsere Rennaktivitäten vor. Weitere Informationen zu unserer Geschichte und unseren Zielen folgen in Kürze.",
   "drivers": [
     {
-      "name": "4ar_Route999",
-      "number": "999",
+      "name": "4ar_Snufkin",
+      "number": "73",
       "image": "/assets/uploads/tops_dr_rennen3-6.png",
-      "description": "Co. Chef und Event Verantwortlicher/Ansprechpartner\n"
+      "description": "Teamchef und Lackierer\n"
     },
     {
-      "name": "4ar_Snufkin",
-      "description": "Teamchef und Lackierer",
-      "image": "/assets/uploads/porgman_rennen5.png",
-      "number": "4711"
+      "name": "4ar_Route999",
+      "description": "Co. Chef und Event Verantwortlicher/Ansprechpartner",
+      "image": "/assets/uploads/tops_dr_rennen3-6.png",
+      "number": "999"
     },
     {
       "name": "4ar_Tops",
-      "number": "69",
-      "image": "/assets/uploads/kazirova_rennen1.png",
+      "number": "72",
+      "image": "/assets/uploads/bmw_m6_sprint-removebg-preview.png",
       "description": "Fahrer "
+    },
+    {
+      "name": "4ar_Kazirova",
+      "number": "13",
+      "description": "Fahrer , Taktimeister , Ausbilder",
+      "image": "/assets/uploads/296er_ferrari-removebg-preview.png"
+    },
+    {
+      "name": "4ar_TecPax",
+      "number": "77",
+      "image": "/assets/uploads/subaru_wrx-removebg-preview.png",
+      "description": "Fahrer und Medien Verantwortlicher"
+    },
+    {
+      "name": "4ar_Toto107",
+      "number": "107",
+      "description": "Fahrer",
+      "image": "/assets/uploads/296er_ferrari-removebg-preview.png"
+    },
+    {
+      "name": "4ar_Bonkers",
+      "number": "46",
+      "description": "Fahrer",
+      "image": "/assets/uploads/20er_amg-removebg-preview.png"
+    },
+    {
+      "name": "4ar_SylentsCH",
+      "number": "404",
+      "description": "Fahrer",
+      "image": "/assets/uploads/nissan_gtr-removebg-preview.png"
+    },
+    {
+      "name": "4ar_Nonocken",
+      "number": "32",
+      "description": "Fahrer",
+      "image": "/assets/uploads/ferrari_458-removebg-preview.png"
+    },
+    {
+      "name": "4ar_MrReds1994",
+      "number": "94",
+      "description": "Fahrer",
+      "image": "/assets/uploads/hyundai_genesis-removebg-preview.png"
+    },
+    {
+      "name": "4ar_Marc-_-207",
+      "number": "207",
+      "description": "Fahrer",
+      "image": "/assets/uploads/bmw_m6_endu-removebg-preview.png"
+    },
+    {
+      "name": "4ar_DerBieber",
+      "number": "21",
+      "description": "Fahrer",
+      "image": "/assets/uploads/audi_r8-removebg-preview.png"
+    },
+    {
+      "name": "4ar_Sandman",
+      "number": "88",
+      "description": "Fahrer",
+      "image": "/assets/uploads/bmw_m6_endu-removebg-preview.png"
     }
   ],
   "races": [],
